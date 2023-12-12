@@ -105,7 +105,7 @@ function animateBall() {
     getRandomValue(-2, 0)
   ); // Adjust the target position
 
-  const animationDuration = 3000; // in milliseconds
+  const animationDuration = 1000; // in milliseconds
   const startTime = Date.now();
 
   function updateAnimation() {

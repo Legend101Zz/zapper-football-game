@@ -608,7 +608,7 @@ scene.add(ambientLight2);
 function animateBall() {
     const initialPosition = new _three.Vector3(0, 0, -10);
     const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), getRandomValue(-2, 0)); // Adjust the target position
-    const animationDuration = 3000; // in milliseconds
+    const animationDuration = 1000; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
         const currentTime = Date.now();
