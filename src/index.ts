@@ -145,7 +145,7 @@ function animateBall() {
     var distance = ball.position.distanceTo(glovePosition);
 
     // If the distance is less than a certain threshold, reset the ball and update the score
-    if (distance < 1) { // Adjust the threshold as needed
+    if (distance < 2) { // Adjust the threshold as needed
       ball.position.copy(initialPosition);
       updateScore();
       return;

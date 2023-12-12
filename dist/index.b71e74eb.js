@@ -636,7 +636,7 @@ function animateBall() {
         var glovePosition = gloveModel.position;
         var distance = ball.position.distanceTo(glovePosition);
         // If the distance is less than a certain threshold, reset the ball and update the score
-        if (distance < 1) {
+        if (distance < 2) {
             ball.position.copy(initialPosition);
             updateScore();
             return;
