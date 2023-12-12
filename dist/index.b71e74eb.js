@@ -536,8 +536,8 @@ var _three = require("three");
 var _zapparThreejs = require("@zappar/zappar-threejs");
 var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _indexCss = require("./index.css");
-const footImg = new URL(require("90b32cfc9642bdf0")).href;
-const model = new URL(require("2c60f4a792ad15b7")).href;
+const footImg = new URL(require("5d5e6a55e6300987")).href;
+const model = new URL(require("fd619265bc0cd3ec")).href;
 let gloveModel;
 // Setup ThreeJS in the usual way
 const renderer = new _three.WebGLRenderer();
@@ -565,6 +565,17 @@ _zapparThreejs.permissionRequestUI().then((granted)=>{
 const tracker = new _zapparThreejs.InstantWorldTracker();
 const trackerGroup = new _zapparThreejs.InstantWorldAnchorGroup(camera, tracker);
 scene.add(trackerGroup);
+var _ = document.getElementById("rotateDevice") || document.createElement("div");
+function checkOrientation() {
+    if (window.screen.orientation) {
+        var isLandscape = window.screen.orientation.type.includes("landscape");
+        _.style.display = isLandscape ? "none" : "block";
+    }
+}
+// Check orientation when the page loads
+checkOrientation();
+// Check orientation when it changes
+if (window.screen.orientation) window.screen.orientation.addEventListener("change", checkOrientation);
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new _three.TextureLoader().load(footImg);
 const ball = new _three.Mesh(new _three.SphereBufferGeometry(1, 32, 32), new _three.MeshBasicMaterial({
@@ -575,9 +586,10 @@ trackerGroup.add(ball);
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 gltfLoader.load(model, (gltf)=>{
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(2, 2, 2);
-    gltf.scene.position.set(0, -0.7, 1);
-    gltf.scene.rotation.set(0, 0, 0);
+    gltf.scene.scale.set(1.5, 1.5, 1.5);
+    gltf.scene.position.set(0, -1.1, 1);
+    // gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
+    // console.log(gloveModel);
     // Add the scene to the tracker group
     gltf.scene.traverse(function(child) {
         if (child.isMesh) {
@@ -607,7 +619,8 @@ scene.add(ambientLight2);
 // ball animation code
 function animateBall() {
     const initialPosition = new _three.Vector3(0, 0, -20);
-    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), -2); // Adjust the target position
+    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), // 0, -1.1,
+    5); // Adjust the target position
     const animationDuration = 1000; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
@@ -615,6 +628,15 @@ function animateBall() {
         const elapsedTime = currentTime - startTime;
         const progress = Math.min(elapsedTime / animationDuration, 1);
         ball.position.lerpVectors(initialPosition, targetPosition, progress);
+        // Calculate the distance between the ball and the glove
+        var glovePosition = gloveModel.position;
+        var distance = ball.position.distanceTo(glovePosition);
+        // If the distance is less than a certain threshold, reset the ball and update the score
+        if (distance < 1) {
+            ball.position.copy(initialPosition);
+            updateScore();
+            return;
+        }
         if (progress < 1) requestAnimationFrame(updateAnimation);
     }
     updateAnimation();
@@ -622,9 +644,16 @@ function animateBall() {
 function getRandomValue(min, max) {
     return min + Math.random() * (max - min);
 }
+let score = 0;
+var scorediv = document.getElementById("score") || document.createElement("div");
+function updateScore() {
+    score++;
+    scorediv.textContent = `Score: ${score}`;
+    console.log(score);
+}
 const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
 placementUI.addEventListener("click", ()=>{
-    placementUI.remove();
+    // placementUI.remove();
     hasPlaced = true;
     animateBall();
 });
@@ -635,7 +664,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"./index.css":"irmnC","three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","90b32cfc9642bdf0":"bc1aq","three/examples/jsm/loaders/GLTFLoader":"dVRsF","2c60f4a792ad15b7":"djv5M"}],"irmnC":[function() {},{}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","5d5e6a55e6300987":"bc1aq","fd619265bc0cd3ec":"djv5M"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -31811,7 +31840,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("ab6016635069926e"));
+                let url = new URL(require("106cc187e775f924"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -31821,7 +31850,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("ab6016635069926e"));
+                let url = new URL(require("106cc187e775f924"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -31831,7 +31860,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("65bef6872557a20a"));
+                let url = new URL(require("a0ee5c35213073ff"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -31926,14 +31955,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("ea24c6854ab23f5"));
+        let url = new URL(require("7a183320e1af8f8b"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","ab6016635069926e":"htM1Y","65bef6872557a20a":"e04H3","ea24c6854ab23f5":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","106cc187e775f924":"htM1Y","a0ee5c35213073ff":"e04H3","7a183320e1af8f8b":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39474,10 +39503,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("c99003734a93ec4b"));
+        if (!worker) worker = new Worker(require("efff20b25161cf5f"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("beb60ea1130a390a")).toString()
+            url: new URL(require("b76674a99ed25c93")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39503,7 +39532,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","c99003734a93ec4b":"35JNJ","beb60ea1130a390a":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","efff20b25161cf5f":"35JNJ","b76674a99ed25c93":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);
@@ -52085,10 +52114,7 @@ const three_1 = require("../three");
 }
 exports.TargetImagePreviewMesh = TargetImagePreviewMesh;
 
-},{"..":"a5Rpw","../three":"e76wS"}],"bc1aq":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football.1916492a.png" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"dVRsF":[function(require,module,exports) {
+},{"..":"a5Rpw","../three":"e76wS"}],"dVRsF":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "GLTFLoader", ()=>GLTFLoader);
@@ -54366,7 +54392,10 @@ function buildNodeHierarchy(nodeId, parentObject, json, parser) {
     return newGeometry;
 }
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"djv5M":[function(require,module,exports) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"irmnC":[function() {},{}],"bc1aq":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football.1916492a.png" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"djv5M":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "gloves.81bd405a.glb" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")

@@ -9,6 +9,7 @@ html, body {
   width: 200px;
   color: #fff;
   text-align: center;
+  z-index: 1;
   background-color: #000c;
   border-radius: 5px;
   padding: 10px;
@@ -16,6 +17,40 @@ html, body {
   position: absolute;
   bottom: 30px;
   left: calc(50% - 100px);
+}
+
+#goalImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#rotateDevice {
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  text-align: center;
+  z-index: 2;
+  background: #000c;
+  padding-top: 20%;
+  font-size: 2em;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#score {
+  color: red;
+  z-index: 2;
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }
 
 /*# sourceMappingURL=index.61d3354a.css.map */

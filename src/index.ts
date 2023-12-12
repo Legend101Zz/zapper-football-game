@@ -41,13 +41,28 @@ const tracker = new ZapparThree.InstantWorldTracker();
 const trackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, tracker);
 scene.add(trackerGroup);
 
+var _ = document.getElementById('rotateDevice') || document.createElement("div");
+function checkOrientation() {
+  if (window.screen.orientation) {
+    var isLandscape = window.screen.orientation.type.includes('landscape');
+    _.style.display = isLandscape ? 'none' : 'block';
+  }
+}
+
+// Check orientation when the page loads
+checkOrientation();
+
+// Check orientation when it changes
+if (window.screen.orientation) {
+  window.screen.orientation.addEventListener('change', checkOrientation);
+}
+
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
   new THREE.SphereBufferGeometry(1, 32, 32),
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
-
 ball.position.set(0, 0, -20); // Adjust the position along the z-axis
 trackerGroup.add(ball);
 
@@ -57,9 +72,10 @@ gltfLoader.load(
   model,
   (gltf) => {
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(2, 2, 2);
-    gltf.scene.position.set(0, -0.7, 1);
-    gltf.scene.rotation.set(0, 0, 0);
+    gltf.scene.scale.set(1.5, 1.5, 1.5);
+    gltf.scene.position.set(0, -1.1, 1);
+    // gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
+    // console.log(gloveModel);
 
     // Add the scene to the tracker group
     gltf.scene.traverse(function (child) {
@@ -87,6 +103,7 @@ gltfLoader.load(
 
     window.addEventListener("deviceorientation", handleOrientation);
     trackerGroup.add(gloveModel);
+
   },
   undefined,
   (error) => console.error(error)
@@ -102,7 +119,8 @@ function animateBall() {
   const targetPosition = new THREE.Vector3(
     getRandomValue(-5, 5),
     getRandomValue(-2, 2),
-    -2
+    // 0, -1.1,
+    5
   ); // Adjust the target position
 
   const animationDuration = 1000; // in milliseconds
@@ -112,8 +130,20 @@ function animateBall() {
     const currentTime = Date.now();
     const elapsedTime = currentTime - startTime;
     const progress = Math.min(elapsedTime / animationDuration, 1);
-
     ball.position.lerpVectors(initialPosition, targetPosition, progress);
+
+    // Calculate the distance between the ball and the glove
+    var glovePosition = gloveModel.position;
+    var distance = ball.position.distanceTo(glovePosition);
+
+    // If the distance is less than a certain threshold, reset the ball and update the score
+    if (distance < 1) { // Adjust the threshold as needed
+      ball.position.copy(initialPosition);
+
+      updateScore();
+      return;
+    }
+    
 
     if (progress < 1) {
       requestAnimationFrame(updateAnimation);
@@ -127,11 +157,17 @@ function getRandomValue(min: number, max: number): number {
   return min + Math.random() * (max - min);
 }
 
-const placementUI =
-  document.getElementById("zappar-placement-ui") ||
-  document.createElement("div");
+let score = 0;
+var scorediv = document.getElementById('score') || document.createElement("div");
+function updateScore() {
+  score++;
+  scorediv.textContent = `Score: ${score}`;
+  console.log(score);
+}
+
+const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
 placementUI.addEventListener("click", () => {
-  placementUI.remove();
+  // placementUI.remove();
   hasPlaced = true;
 
   animateBall();
