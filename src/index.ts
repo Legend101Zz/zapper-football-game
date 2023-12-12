@@ -48,7 +48,7 @@ const ball = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
 
-ball.position.set(0, 0, -10); // Adjust the position along the z-axis
+ball.position.set(0, 0, -20); // Adjust the position along the z-axis
 trackerGroup.add(ball);
 
 const gltfLoader = new GLTFLoader(manager);
@@ -98,11 +98,11 @@ scene.add(ambientLight2);
 
 // ball animation code
 function animateBall() {
-  const initialPosition = new THREE.Vector3(0, 0, -10);
+  const initialPosition = new THREE.Vector3(0, 0, -20);
   const targetPosition = new THREE.Vector3(
     getRandomValue(-5, 5),
     getRandomValue(-2, 2),
-    getRandomValue(-2, 0)
+    -2
   ); // Adjust the target position
 
   const animationDuration = 1000; // in milliseconds

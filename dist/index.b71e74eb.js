@@ -570,7 +570,7 @@ const ballTexture = new _three.TextureLoader().load(footImg);
 const ball = new _three.Mesh(new _three.SphereBufferGeometry(1, 32, 32), new _three.MeshBasicMaterial({
     map: ballTexture
 }));
-ball.position.set(0, 0, -10); // Adjust the position along the z-axis
+ball.position.set(0, 0, -20); // Adjust the position along the z-axis
 trackerGroup.add(ball);
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 gltfLoader.load(model, (gltf)=>{
@@ -606,8 +606,8 @@ const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient l
 scene.add(ambientLight2);
 // ball animation code
 function animateBall() {
-    const initialPosition = new _three.Vector3(0, 0, -10);
-    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), getRandomValue(-2, 0)); // Adjust the target position
+    const initialPosition = new _three.Vector3(0, 0, -20);
+    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), -2); // Adjust the target position
     const animationDuration = 1000; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
