@@ -57,8 +57,20 @@ gltfLoader.load(
   model,
   (gltf) => {
     gloveModel = gltf.scene;
-    gloveModel.scale.set(0.05, 0.05, 0.05);
-    gloveModel.position.set(0, 0, -5); // Adjust the position along the z-axis
+    gltf.scene.scale.set(2, 2, 2);
+    gltf.scene.position.set(0, -0.7, 1);
+    gltf.scene.rotation.set(Math.PI / 2, 0, 0);
+
+    // Add the scene to the tracker group
+    gltf.scene.traverse(function (child) {
+      if ((child as THREE.Mesh).isMesh) {
+        let m = child as THREE.Mesh;
+        child.castShadow = true;
+        child.receiveShadow = true;
+        //m.castShadow = true
+        m.frustumCulled = false;
+      }
+    });
 
     // Set up device orientation event listener
     function handleOrientation(event: DeviceOrientationEvent) {
@@ -77,6 +89,10 @@ gltfLoader.load(
   undefined,
   (error) => console.error(error)
 );
+
+// Add ambient light for overall illumination
+const ambientLight2 = new THREE.AmbientLight(0x404040); // Soft white ambient light
+scene.add(ambientLight2);
 
 const placementUI =
   document.getElementById("zappar-placement-ui") ||

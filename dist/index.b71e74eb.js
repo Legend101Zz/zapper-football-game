@@ -575,8 +575,19 @@ trackerGroup.add(ball);
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 gltfLoader.load(model, (gltf)=>{
     gloveModel = gltf.scene;
-    gloveModel.scale.set(0.05, 0.05, 0.05);
-    gloveModel.position.set(0, 0, -5); // Adjust the position along the z-axis
+    gltf.scene.scale.set(2, 2, 2);
+    gltf.scene.position.set(0, -0.7, 1);
+    gltf.scene.rotation.set(Math.PI / 2, 0, 0);
+    // Add the scene to the tracker group
+    gltf.scene.traverse(function(child) {
+        if (child.isMesh) {
+            let m = child;
+            child.castShadow = true;
+            child.receiveShadow = true;
+            //m.castShadow = true
+            m.frustumCulled = false;
+        }
+    });
     // Set up device orientation event listener
     function handleOrientation(event) {
         if (gloveModel) {
@@ -589,6 +600,9 @@ gltfLoader.load(model, (gltf)=>{
     window.addEventListener("deviceorientation", handleOrientation);
     trackerGroup.add(gloveModel);
 }, undefined, (error)=>console.error(error));
+// Add ambient light for overall illumination
+const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient light
+scene.add(ambientLight2);
 const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
 placementUI.addEventListener("click", ()=>{
     placementUI.remove();
