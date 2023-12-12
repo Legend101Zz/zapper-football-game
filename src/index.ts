@@ -74,7 +74,7 @@ gltfLoader.load(
     gloveModel = gltf.scene;
     gltf.scene.scale.set(1.5, 1.5, 1.5);
     gltf.scene.position.set(0, -1.1, 1);
-    // gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
+    gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
     // console.log(gloveModel);
 
     // Add the scene to the tracker group
@@ -91,11 +91,20 @@ gltfLoader.load(
     // Set up device orientation event listener
     function handleOrientation(event: DeviceOrientationEvent) {
       if (gloveModel) {
-        const gamma = event.gamma || 0;
+        let horizontalTilt;
 
-        // Adjust the movement speed based on the gamma value
+        // Check if the device is in landscape mode
+        if (window.screen.orientation && window.screen.orientation.type.includes('landscape')) {
+          // In landscape mode, the beta value corresponds to the horizontal tilt
+          horizontalTilt = event.beta || 0;
+        } else {
+          // In portrait mode, the gamma value corresponds to the horizontal tilt
+          horizontalTilt = event.gamma || 0;
+        }
+
+        // Adjust the movement speed based on the horizontal tilt
         const movementSpeed = 0.05;
-        const moveX = gamma * movementSpeed;
+        const moveX = horizontalTilt * movementSpeed;
 
         gloveModel.position.x = moveX;
       }
@@ -119,7 +128,6 @@ function animateBall() {
   const targetPosition = new THREE.Vector3(
     getRandomValue(-5, 5),
     getRandomValue(-2, 2),
-    // 0, -1.1,
     5
   ); // Adjust the target position
 
@@ -139,12 +147,10 @@ function animateBall() {
     // If the distance is less than a certain threshold, reset the ball and update the score
     if (distance < 1) { // Adjust the threshold as needed
       ball.position.copy(initialPosition);
-
       updateScore();
       return;
     }
     
-
     if (progress < 1) {
       requestAnimationFrame(updateAnimation);
     }
@@ -169,7 +175,6 @@ const placementUI = document.getElementById("zappar-placement-ui") || document.c
 placementUI.addEventListener("click", () => {
   // placementUI.remove();
   hasPlaced = true;
-
   animateBall();
 });
 

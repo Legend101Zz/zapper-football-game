@@ -588,7 +588,7 @@ gltfLoader.load(model, (gltf)=>{
     gloveModel = gltf.scene;
     gltf.scene.scale.set(1.5, 1.5, 1.5);
     gltf.scene.position.set(0, -1.1, 1);
-    // gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
+    gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
     // console.log(gloveModel);
     // Add the scene to the tracker group
     gltf.scene.traverse(function(child) {
@@ -603,10 +603,15 @@ gltfLoader.load(model, (gltf)=>{
     // Set up device orientation event listener
     function handleOrientation(event) {
         if (gloveModel) {
-            const gamma = event.gamma || 0;
-            // Adjust the movement speed based on the gamma value
+            let horizontalTilt;
+            // Check if the device is in landscape mode
+            if (window.screen.orientation && window.screen.orientation.type.includes("landscape")) // In landscape mode, the beta value corresponds to the horizontal tilt
+            horizontalTilt = event.beta || 0;
+            else // In portrait mode, the gamma value corresponds to the horizontal tilt
+            horizontalTilt = event.gamma || 0;
+            // Adjust the movement speed based on the horizontal tilt
             const movementSpeed = 0.05;
-            const moveX = gamma * movementSpeed;
+            const moveX = horizontalTilt * movementSpeed;
             gloveModel.position.x = moveX;
         }
     }
@@ -619,8 +624,7 @@ scene.add(ambientLight2);
 // ball animation code
 function animateBall() {
     const initialPosition = new _three.Vector3(0, 0, -20);
-    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), // 0, -1.1,
-    5); // Adjust the target position
+    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), 5); // Adjust the target position
     const animationDuration = 1000; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
