@@ -577,7 +577,7 @@ gltfLoader.load(model, (gltf)=>{
     gloveModel = gltf.scene;
     gltf.scene.scale.set(2, 2, 2);
     gltf.scene.position.set(0, -0.7, 1);
-    gltf.scene.rotation.set(Math.PI / 2, 0, 0);
+    gltf.scene.rotation.set(0, 0, 0);
     // Add the scene to the tracker group
     gltf.scene.traverse(function(child) {
         if (child.isMesh) {
@@ -591,10 +591,11 @@ gltfLoader.load(model, (gltf)=>{
     // Set up device orientation event listener
     function handleOrientation(event) {
         if (gloveModel) {
-            const beta = event.beta || 0;
-            const alpha = event.alpha || 0;
             const gamma = event.gamma || 0;
-            gloveModel.rotation.set(beta, alpha, -gamma);
+            // Adjust the movement speed based on the gamma value
+            const movementSpeed = 0.05;
+            const moveX = gamma * movementSpeed;
+            gloveModel.position.x = moveX;
         }
     }
     window.addEventListener("deviceorientation", handleOrientation);
@@ -603,10 +604,29 @@ gltfLoader.load(model, (gltf)=>{
 // Add ambient light for overall illumination
 const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient light
 scene.add(ambientLight2);
+// ball animation code
+function animateBall() {
+    const initialPosition = new _three.Vector3(0, 0, -10);
+    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), getRandomValue(-2, 0)); // Adjust the target position
+    const animationDuration = 3000; // in milliseconds
+    const startTime = Date.now();
+    function updateAnimation() {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / animationDuration, 1);
+        ball.position.lerpVectors(initialPosition, targetPosition, progress);
+        if (progress < 1) requestAnimationFrame(updateAnimation);
+    }
+    updateAnimation();
+}
+function getRandomValue(min, max) {
+    return min + Math.random() * (max - min);
+}
 const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
 placementUI.addEventListener("click", ()=>{
     placementUI.remove();
     hasPlaced = true;
+    animateBall();
 });
 // Set up our render loop
 function render() {
