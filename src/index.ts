@@ -4,7 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
-const model = new URL("../assets/gloves.glb", import.meta.url).href;
+const model = new URL("../assets/gloves_goalkeeper.glb", import.meta.url).href;
 let gloveModel: any;
 
 // Setup ThreeJS in the usual way
@@ -72,8 +72,8 @@ gltfLoader.load(
   model,
   (gltf) => {
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(1.5, 1.5, 1.5);
-    gltf.scene.position.set(0, -1.1, 1);
+    gltf.scene.scale.set(1.7, 1.7, 1.7);
+    gltf.scene.position.set(0, -0.6, 1);
     gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
     // console.log(gloveModel);
 
@@ -118,9 +118,20 @@ gltfLoader.load(
   (error) => console.error(error)
 );
 
-// Add ambient light for overall illumination
-const ambientLight2 = new THREE.AmbientLight(0x404040); // Soft white ambient light
-scene.add(ambientLight2);
+
+const directionalLight = new THREE.DirectionalLight('white', 0.6);
+directionalLight.position.set(0, 0, 1000);
+trackerGroup.add(directionalLight);
+
+const ambientLight = new THREE.AmbientLight('white', 0.4);
+trackerGroup.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 0.5);
+pointLight.position.set(0, 100, 200);
+trackerGroup.add(pointLight);
+
+
+
 
 // ball animation code
 function animateBall() {
@@ -145,7 +156,7 @@ function animateBall() {
     var distance = ball.position.distanceTo(glovePosition);
 
     // If the distance is less than a certain threshold, reset the ball and update the score
-    if (distance < 2) { // Adjust the threshold as needed
+    if (distance < 1.2) { // Adjust the threshold as needed
       ball.position.copy(initialPosition);
       updateScore();
       return;

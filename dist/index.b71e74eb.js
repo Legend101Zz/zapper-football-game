@@ -537,7 +537,7 @@ var _zapparThreejs = require("@zappar/zappar-threejs");
 var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _indexCss = require("./index.css");
 const footImg = new URL(require("5d5e6a55e6300987")).href;
-const model = new URL(require("fd619265bc0cd3ec")).href;
+const model = new URL(require("dd7095ee4785dcd1")).href;
 let gloveModel;
 // Setup ThreeJS in the usual way
 const renderer = new _three.WebGLRenderer();
@@ -586,8 +586,8 @@ trackerGroup.add(ball);
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 gltfLoader.load(model, (gltf)=>{
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(1.5, 1.5, 1.5);
-    gltf.scene.position.set(0, -1.1, 1);
+    gltf.scene.scale.set(1.7, 1.7, 1.7);
+    gltf.scene.position.set(0, -0.6, 1);
     gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
     // console.log(gloveModel);
     // Add the scene to the tracker group
@@ -618,9 +618,14 @@ gltfLoader.load(model, (gltf)=>{
     window.addEventListener("deviceorientation", handleOrientation);
     trackerGroup.add(gloveModel);
 }, undefined, (error)=>console.error(error));
-// Add ambient light for overall illumination
-const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient light
-scene.add(ambientLight2);
+const directionalLight = new _three.DirectionalLight("white", 0.6);
+directionalLight.position.set(0, 0, 1000);
+trackerGroup.add(directionalLight);
+const ambientLight = new _three.AmbientLight("white", 0.4);
+trackerGroup.add(ambientLight);
+const pointLight = new _three.PointLight(0xffffff, 0.5);
+pointLight.position.set(0, 100, 200);
+trackerGroup.add(pointLight);
 // ball animation code
 function animateBall() {
     const initialPosition = new _three.Vector3(0, 0, -20);
@@ -636,7 +641,7 @@ function animateBall() {
         var glovePosition = gloveModel.position;
         var distance = ball.position.distanceTo(glovePosition);
         // If the distance is less than a certain threshold, reset the ball and update the score
-        if (distance < 2) {
+        if (distance < 1.2) {
             ball.position.copy(initialPosition);
             updateScore();
             return;
@@ -668,7 +673,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","5d5e6a55e6300987":"bc1aq","fd619265bc0cd3ec":"djv5M"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","5d5e6a55e6300987":"bc1aq","dd7095ee4785dcd1":"fOGld"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -54399,8 +54404,8 @@ function buildNodeHierarchy(nodeId, parentObject, json, parser) {
 },{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"irmnC":[function() {},{}],"bc1aq":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football.1916492a.png" + "?" + Date.now();
 
-},{"./helpers/bundle-url":"lgJ39"}],"djv5M":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "gloves.81bd405a.glb" + "?" + Date.now();
+},{"./helpers/bundle-url":"lgJ39"}],"fOGld":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "gloves_goalkeeper.4cdad463.glb" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
 
