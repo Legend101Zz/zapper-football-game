@@ -19,16 +19,6 @@ html, body {
   left: calc(50% - 100px);
 }
 
-#goalImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
 #rotateDevice {
   width: 100%;
   height: 100%;

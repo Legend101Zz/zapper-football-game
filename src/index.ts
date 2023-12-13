@@ -4,6 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
+const netImg = new URL("../assets/screen-4.jpg", import.meta.url).href;
 const model = new URL("../assets/gloves_goalkeeper.glb", import.meta.url).href;
 let gloveModel: any;
 
@@ -28,7 +29,7 @@ ZapparThree.glContextSet(renderer.getContext());
 
 // Create a ThreeJS Scene and set its background to be the camera background texture
 const scene = new THREE.Scene();
-scene.background = camera.backgroundTexture;
+// scene.background = camera.backgroundTexture;
 
 // Request the necessary permission from the user
 ZapparThree.permissionRequestUI().then((granted) => {
@@ -37,9 +38,15 @@ ZapparThree.permissionRequestUI().then((granted) => {
 });
 
 // Set up our instant tracker group
-const tracker = new ZapparThree.InstantWorldTracker();
-const trackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, tracker);
-scene.add(trackerGroup);
+const instantTracker = new ZapparThree.InstantWorldTracker();
+const instantTrackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, instantTracker);
+scene.add(instantTrackerGroup);
+
+// face tracker group
+const faceTracker = new ZapparThree.FaceTrackerLoader(manager).load();
+const faceTrackerGroup = new ZapparThree.FaceAnchorGroup(camera, faceTracker);
+scene.add(faceTrackerGroup);
+
 
 var _ = document.getElementById('rotateDevice') || document.createElement("div");
 function checkOrientation() {
@@ -64,55 +71,34 @@ const ball = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
 ball.position.set(0, 0, -20); // Adjust the position along the z-axis
-trackerGroup.add(ball);
+instantTrackerGroup.add(ball);
+
+const netTexture = new THREE.TextureLoader().load(netImg);
+const net = new THREE.Mesh(
+  new THREE.PlaneGeometry(28, 15),
+  new THREE.MeshBasicMaterial({ map: netTexture })
+);
+net.position.set(0, 0, -20);
+instantTrackerGroup.add(net);
 
 const gltfLoader = new GLTFLoader(manager);
-
 gltfLoader.load(
   model,
   (gltf) => {
+    // Original model
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(1.7, 1.7, 1.7);
-    gltf.scene.position.set(0, -0.6, 1);
-    gltf.scene.rotation.set(0, 20 * (Math.PI / 180), 0);
-    // console.log(gloveModel);
+    gloveModel.scale.set(1.7, 1.7, 1.7);
+    gloveModel.position.set(0, -0.6, 1);
+    gloveModel.rotation.set(0, 20 * (Math.PI / 180), 0);
+    faceTrackerGroup.add(gloveModel);
+    console.log(gloveModel);
 
-    // Add the scene to the tracker group
-    gltf.scene.traverse(function (child) {
-      if ((child as THREE.Mesh).isMesh) {
-        let m = child as THREE.Mesh;
-        child.castShadow = true;
-        child.receiveShadow = true;
-        //m.castShadow = true
-        m.frustumCulled = false;
-      }
-    });
-
-    // Set up device orientation event listener
-    function handleOrientation(event: DeviceOrientationEvent) {
-      if (gloveModel) {
-        let horizontalTilt;
-
-        // Check if the device is in landscape mode
-        if (window.screen.orientation && window.screen.orientation.type.includes('landscape')) {
-          // In landscape mode, the beta value corresponds to the horizontal tilt
-          horizontalTilt = event.beta || 0;
-        } else {
-          // In portrait mode, the gamma value corresponds to the horizontal tilt
-          horizontalTilt = event.gamma || 0;
-        }
-
-        // Adjust the movement speed based on the horizontal tilt
-        const movementSpeed = 0.05;
-        const moveX = horizontalTilt * movementSpeed;
-
-        gloveModel.position.x = moveX;
-      }
-    }
-
-    window.addEventListener("deviceorientation", handleOrientation);
-    trackerGroup.add(gloveModel);
-
+    // Clone the model
+    const clonedModel = gloveModel.clone();
+    clonedModel.position.set(0, -0.6, 1.8);
+    clonedModel.rotation.set(0, 200 * (Math.PI / 180), 0);
+    faceTrackerGroup.add(clonedModel);
+    console.log(clonedModel);
   },
   undefined,
   (error) => console.error(error)
@@ -121,28 +107,25 @@ gltfLoader.load(
 
 const directionalLight = new THREE.DirectionalLight('white', 0.6);
 directionalLight.position.set(0, 0, 1000);
-trackerGroup.add(directionalLight);
+faceTrackerGroup.add(directionalLight);
 
 const ambientLight = new THREE.AmbientLight('white', 0.4);
-trackerGroup.add(ambientLight);
+faceTrackerGroup.add(ambientLight);
 
 const pointLight = new THREE.PointLight(0xffffff, 0.5);
 pointLight.position.set(0, 100, 200);
-trackerGroup.add(pointLight);
+faceTrackerGroup.add(pointLight);
 
-
-
-
+const initialPosition = new THREE.Vector3(0, 0, -20);
 // ball animation code
 function animateBall() {
-  const initialPosition = new THREE.Vector3(0, 0, -20);
   const targetPosition = new THREE.Vector3(
-    getRandomValue(-5, 5),
+    getRandomValue(-4, 4),
     getRandomValue(-2, 2),
     5
   ); // Adjust the target position
 
-  const animationDuration = 1000; // in milliseconds
+  const animationDuration = 1150; // in milliseconds
   const startTime = Date.now();
 
   function updateAnimation() {
@@ -156,7 +139,7 @@ function animateBall() {
     var distance = ball.position.distanceTo(glovePosition);
 
     // If the distance is less than a certain threshold, reset the ball and update the score
-    if (distance < 1.2) { // Adjust the threshold as needed
+    if (distance < 2) { // Adjust the threshold as needed
       ball.position.copy(initialPosition);
       updateScore();
       return;
@@ -164,6 +147,11 @@ function animateBall() {
     
     if (progress < 1) {
       requestAnimationFrame(updateAnimation);
+    }
+
+    if(ball.position == targetPosition) {
+      ball.position.copy(initialPosition);
+      return;
     }
   }
 
@@ -184,15 +172,32 @@ function updateScore() {
 
 const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
 placementUI.addEventListener("click", () => {
-  // placementUI.remove();
+  placementUI.style.display = 'none'; // Hide the UI
   hasPlaced = true;
+  let count = 0;
+  const maxCount = 10;
+  const interval = 3000; // 3 seconds
+
+  // Start the loop immediately
   animateBall();
+  count++;
+
+  const intervalId = setInterval(() => {
+    animateBall();
+
+    count++;
+    if (count >= maxCount) {
+      clearInterval(intervalId);
+      placementUI.style.display = 'block'; // Show the UI again
+      ball.position.copy(initialPosition);
+    }
+  }, interval);
 });
 
 // Set up our render loop
 function render() {
   camera.updateFrame(renderer);
-  if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, 0, -5);
 
+  if (!hasPlaced) instantTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
   renderer.render(scene, camera);
 }
