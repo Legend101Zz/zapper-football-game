@@ -48,21 +48,21 @@ const faceTrackerGroup = new ZapparThree.FaceAnchorGroup(camera, faceTracker);
 scene.add(faceTrackerGroup);
 
 
-var _ = document.getElementById('rotateDevice') || document.createElement("div");
-function checkOrientation() {
-  if (window.screen.orientation) {
-    var isLandscape = window.screen.orientation.type.includes('landscape');
-    _.style.display = isLandscape ? 'none' : 'block';
-  }
-}
+// var _ = document.getElementById('rotateDevice') || document.createElement("div");
+// function checkOrientation() {
+//   if (window.screen.orientation) {
+//     var isLandscape = window.screen.orientation.type.includes('landscape');
+//     _.style.display = isLandscape ? 'none' : 'block';
+//   }
+// }
 
-// Check orientation when the page loads
-checkOrientation();
+// // Check orientation when the page loads
+// checkOrientation();
 
-// Check orientation when it changes
-if (window.screen.orientation) {
-  window.screen.orientation.addEventListener('change', checkOrientation);
-}
+// // Check orientation when it changes
+// if (window.screen.orientation) {
+//   window.screen.orientation.addEventListener('change', checkOrientation);
+// }
 
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new THREE.TextureLoader().load(footImg);
@@ -78,8 +78,8 @@ const net = new THREE.Mesh(
   new THREE.PlaneGeometry(28, 15),
   new THREE.MeshBasicMaterial({ map: netTexture })
 );
-net.position.set(0, 0, -20);
-instantTrackerGroup.add(net);
+net.position.set(0, 0, -25);
+scene.add(net);
 
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(
@@ -91,14 +91,14 @@ gltfLoader.load(
     gloveModel.position.set(0, -0.6, 1);
     gloveModel.rotation.set(0, 20 * (Math.PI / 180), 0);
     faceTrackerGroup.add(gloveModel);
-    console.log(gloveModel);
+    // console.log(gloveModel);
 
     // Clone the model
     const clonedModel = gloveModel.clone();
     clonedModel.position.set(0, -0.6, 1.8);
     clonedModel.rotation.set(0, 200 * (Math.PI / 180), 0);
     faceTrackerGroup.add(clonedModel);
-    console.log(clonedModel);
+    // console.log(clonedModel);
   },
   undefined,
   (error) => console.error(error)

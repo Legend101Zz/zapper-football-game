@@ -536,9 +536,9 @@ var _three = require("three");
 var _zapparThreejs = require("@zappar/zappar-threejs");
 var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _indexCss = require("./index.css");
-const footImg = new URL(require("5d5e6a55e6300987")).href;
-const netImg = new URL(require("d5b57c6a64da9799")).href;
-const model = new URL(require("dd7095ee4785dcd1")).href;
+const footImg = new URL(require("53fe532b12b86ef9")).href;
+const netImg = new URL(require("40c0739cabb838cb")).href;
+const model = new URL(require("dc996731101b57d6")).href;
 let gloveModel;
 // Setup ThreeJS in the usual way
 const renderer = new _three.WebGLRenderer();
@@ -570,17 +570,19 @@ scene.add(instantTrackerGroup);
 const faceTracker = new _zapparThreejs.FaceTrackerLoader(manager).load();
 const faceTrackerGroup = new _zapparThreejs.FaceAnchorGroup(camera, faceTracker);
 scene.add(faceTrackerGroup);
-var _ = document.getElementById("rotateDevice") || document.createElement("div");
-function checkOrientation() {
-    if (window.screen.orientation) {
-        var isLandscape = window.screen.orientation.type.includes("landscape");
-        _.style.display = isLandscape ? "none" : "block";
-    }
-}
-// Check orientation when the page loads
-checkOrientation();
-// Check orientation when it changes
-if (window.screen.orientation) window.screen.orientation.addEventListener("change", checkOrientation);
+// var _ = document.getElementById('rotateDevice') || document.createElement("div");
+// function checkOrientation() {
+//   if (window.screen.orientation) {
+//     var isLandscape = window.screen.orientation.type.includes('landscape');
+//     _.style.display = isLandscape ? 'none' : 'block';
+//   }
+// }
+// // Check orientation when the page loads
+// checkOrientation();
+// // Check orientation when it changes
+// if (window.screen.orientation) {
+//   window.screen.orientation.addEventListener('change', checkOrientation);
+// }
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new _three.TextureLoader().load(footImg);
 const ball = new _three.Mesh(new _three.SphereBufferGeometry(1, 32, 32), new _three.MeshBasicMaterial({
@@ -592,8 +594,8 @@ const netTexture = new _three.TextureLoader().load(netImg);
 const net = new _three.Mesh(new _three.PlaneGeometry(28, 15), new _three.MeshBasicMaterial({
     map: netTexture
 }));
-net.position.set(0, 0, -20);
-instantTrackerGroup.add(net);
+net.position.set(0, 0, -25);
+scene.add(net);
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 gltfLoader.load(model, (gltf)=>{
     // Original model
@@ -602,13 +604,13 @@ gltfLoader.load(model, (gltf)=>{
     gloveModel.position.set(0, -0.6, 1);
     gloveModel.rotation.set(0, 20 * (Math.PI / 180), 0);
     faceTrackerGroup.add(gloveModel);
-    console.log(gloveModel);
+    // console.log(gloveModel);
     // Clone the model
     const clonedModel = gloveModel.clone();
     clonedModel.position.set(0, -0.6, 1.8);
     clonedModel.rotation.set(0, 200 * (Math.PI / 180), 0);
     faceTrackerGroup.add(clonedModel);
-    console.log(clonedModel);
+// console.log(clonedModel);
 }, undefined, (error)=>console.error(error));
 const directionalLight = new _three.DirectionalLight("white", 0.6);
 directionalLight.position.set(0, 0, 1000);
@@ -622,7 +624,7 @@ const initialPosition = new _three.Vector3(0, 0, -20);
 // ball animation code
 function animateBall() {
     const targetPosition = new _three.Vector3(getRandomValue(-4, 4), getRandomValue(-2, 2), 5); // Adjust the target position
-    const animationDuration = 1250; // in milliseconds
+    const animationDuration = 1150; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
         const currentTime = Date.now();
@@ -683,7 +685,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","5d5e6a55e6300987":"bc1aq","dd7095ee4785dcd1":"fOGld","d5b57c6a64da9799":"kyN9c"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","53fe532b12b86ef9":"bc1aq","dc996731101b57d6":"fOGld","40c0739cabb838cb":"kyN9c"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -31859,7 +31861,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("106cc187e775f924"));
+                let url = new URL(require("6ff70aec5a4077e7"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -31869,7 +31871,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("106cc187e775f924"));
+                let url = new URL(require("6ff70aec5a4077e7"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -31879,7 +31881,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("a0ee5c35213073ff"));
+                let url = new URL(require("96c8a369fefa9734"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -31974,14 +31976,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("7a183320e1af8f8b"));
+        let url = new URL(require("3f27e4be2a7c3752"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","106cc187e775f924":"htM1Y","a0ee5c35213073ff":"e04H3","7a183320e1af8f8b":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","6ff70aec5a4077e7":"htM1Y","96c8a369fefa9734":"e04H3","3f27e4be2a7c3752":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39522,10 +39524,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("efff20b25161cf5f"));
+        if (!worker) worker = new Worker(require("8d60ea2c38772947"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("b76674a99ed25c93")).toString()
+            url: new URL(require("3e0ffdb4e3635a7c")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39551,7 +39553,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","efff20b25161cf5f":"35JNJ","b76674a99ed25c93":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","8d60ea2c38772947":"35JNJ","3e0ffdb4e3635a7c":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);
