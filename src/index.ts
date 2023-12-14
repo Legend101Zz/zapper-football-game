@@ -19,12 +19,13 @@ window.addEventListener("resize", () => {
 
 renderer.setAnimationLoop(render);
 
-// Setup a Zappar camera instead of one of ThreeJS's cameras
-const camera = new ZapparThree.Camera();
-const manager = new ZapparThree.LoadingManager();
-
-// The Zappar library needs your WebGL context, so pass it
+var camera = new ZapparThree.Camera({
+  rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
+  userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM=",
+});
+camera.userCameraMirrorMode = ZapparThree.CameraMirrorMode.None;
 ZapparThree.glContextSet(renderer.getContext());
+const manager = new ZapparThree.LoadingManager();
 
 // Create a ThreeJS Scene and set its background to be the camera background texture
 const scene = new THREE.Scene();
@@ -36,32 +37,12 @@ ZapparThree.permissionRequestUI().then((granted) => {
   else ZapparThree.permissionDeniedUI();
 });
 
-// Set up our instant tracker group
-// const instantTracker = new ZapparThree.InstantWorldTracker();
-// const instantTrackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, instantTracker);
-// scene.add(instantTrackerGroup);
 
 // face tracker group
 const faceTracker = new ZapparThree.FaceTrackerLoader(manager).load();
 const faceTrackerGroup = new ZapparThree.FaceAnchorGroup(camera, faceTracker);
 scene.add(faceTrackerGroup);
 
-
-// var _ = document.getElementById('rotateDevice') || document.createElement("div");
-// function checkOrientation() {
-//   if (window.screen.orientation) {
-//     var isLandscape = window.screen.orientation.type.includes('landscape');
-//     _.style.display = isLandscape ? 'none' : 'block';
-//   }
-// }
-
-// // Check orientation when the page loads
-// checkOrientation();
-
-// // Check orientation when it changes
-// if (window.screen.orientation) {
-//   window.screen.orientation.addEventListener('change', checkOrientation);
-// }
 
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
@@ -73,14 +54,29 @@ scene.add(ball);
 
 const netTexture = new THREE.TextureLoader().load(netImg);
 const net = new THREE.Mesh(
-  // new THREE.PlaneGeometry(32, 19),
-  new THREE.PlaneGeometry(19, 38),
+  new THREE.PlaneGeometry(32, 19),
+  // new THREE.PlaneGeometry(19, 38),
   new THREE.MeshBasicMaterial({ map: netTexture })
 );
-net.position.set(0, 3, -30);
+net.position.set(0, 0, -30);
 scene.add(net);
-console.log(net);
+// console.log(net);
 
+var _ = document.getElementById('rotateDevice') || document.createElement("div");
+function checkOrientation() {
+  if (window.screen.orientation) {
+    var isLandscape = window.screen.orientation.type.includes('landscape');
+    _.style.display = isLandscape ? 'none' : 'block';
+  }
+}
+
+// Check orientation when the page loads
+checkOrientation();
+
+// Check orientation when it changes
+if (window.screen.orientation) {
+  window.screen.orientation.addEventListener('change', checkOrientation);
+}
 
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(
@@ -88,44 +84,42 @@ gltfLoader.load(
   (gltf) => {
     // Original model
     gloveModel = gltf.scene;
-    gloveModel.scale.set(1.7, 1.7, 1.7);
+    gloveModel.scale.set(4, 4, 4);
     gloveModel.position.set(0, -0.6, -4);
-    gloveModel.rotation.set(0, 20 * (Math.PI / 180), 0);
+    gloveModel.rotation.set(0, 0, 0);
     faceTrackerGroup.add(gloveModel);
-    console.log(gloveModel);
+    // console.log(gloveModel);
 
     // Clone the model
     const clonedModel = gloveModel.clone();
-    clonedModel.position.set(0, -0.6, -3.2);
-    clonedModel.rotation.set(0, 200 * (Math.PI / 180), 0);
+    clonedModel.position.set(-0.8, -0.6, -2);
+    clonedModel.rotation.set(0, 180 * (Math.PI / 180), 0);
     faceTrackerGroup.add(clonedModel);
-    console.log(clonedModel);
+    // console.log(clonedModel);
   },
   undefined,
   (error) => console.error(error)
 );
 
-
-const directionalLight = new THREE.DirectionalLight('white', 0.6);
+const directionalLight = new THREE.DirectionalLight("white", 0.6);
 directionalLight.position.set(0, 0, 1000);
 faceTrackerGroup.add(directionalLight);
 
-const ambientLight = new THREE.AmbientLight('white', 0.4);
+const ambientLight = new THREE.AmbientLight("white", 0.4);
 faceTrackerGroup.add(ambientLight);
-
-const pointLight = new THREE.PointLight(0xffffff, 0.5);
-pointLight.position.set(0, 100, 200);
-faceTrackerGroup.add(pointLight);
 
 
 const initialPosition = new THREE.Vector3(0, 0, -30);
+let isMessageDisplayed = false;
+let isBallCaught = false;
+
 // ball animation code
 function animateBall() {
   const targetPosition = new THREE.Vector3(
     getRandomValue(-4, 4),
     getRandomValue(-2, 2),
     5
-  ); // Adjust the target position
+  );
 
   const animationDuration = 1150; // in milliseconds
   const startTime = Date.now();
@@ -141,19 +135,31 @@ function animateBall() {
     var distance = ball.position.distanceTo(glovePosition);
 
     // If the distance is less than a certain threshold, reset the ball and update the score
-    if (distance < 2) { // Adjust the threshold as needed
+    if (distance < 1.8 && !isBallCaught) {
+      isBallCaught = true;
       ball.position.copy(initialPosition);
       updateScore();
-      return;
-    }
-    
-    if (progress < 1) {
-      requestAnimationFrame(updateAnimation);
     }
 
-    if(ball.position == targetPosition) {
+    if (ball.position.equals(targetPosition)) {
       ball.position.copy(initialPosition);
+      isBallCaught = false;
+      if (!isMessageDisplayed) {
+        const messageDiv = document.getElementById('message');
+        if (messageDiv) {
+          isMessageDisplayed = true;
+          messageDiv.textContent = "Goal!";
+          setTimeout(() => {
+            messageDiv.textContent = "";
+            isMessageDisplayed = false;
+          }, 2000);
+        }
+      }
       return;
+    }
+
+    if (progress < 1) {
+      requestAnimationFrame(updateAnimation);
     }
   }
 
@@ -165,16 +171,30 @@ function getRandomValue(min: number, max: number): number {
 }
 
 let score = 0;
-var scorediv = document.getElementById('score') || document.createElement("div");
+
+var scorediv =
+  document.getElementById("score") || document.createElement("div");
 function updateScore() {
   score++;
   scorediv.textContent = `Score: ${score}`;
-  console.log(score);
+  if (!isMessageDisplayed) {
+    const messageDiv = document.getElementById('message');
+    if (messageDiv) {
+      isMessageDisplayed = true;
+      messageDiv.textContent = "Goal Saved!";
+      setTimeout(() => {
+        messageDiv.textContent = "";
+        isMessageDisplayed = false;
+      }, 2000);
+    }
+  }
+  return;
 }
 
 const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
+
 placementUI.addEventListener("click", () => {
-  placementUI.style.display = 'none';
+  placementUI.style.display = "none";
   let count = 0;
   const maxCount = 10;
   const interval = 3000; // 3 seconds
@@ -188,7 +208,7 @@ placementUI.addEventListener("click", () => {
     count++;
     if (count >= maxCount) {
       clearInterval(intervalId);
-      placementUI.style.display = 'block';
+      placementUI.style.display = "block";
       ball.position.copy(initialPosition);
     }
   }, interval);
