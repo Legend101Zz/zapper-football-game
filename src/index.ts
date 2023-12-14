@@ -11,7 +11,6 @@ let gloveModel: any;
 // Setup ThreeJS in the usual way
 const renderer = new THREE.WebGLRenderer();
 document.body.appendChild(renderer.domElement);
-let hasPlaced = false;
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 window.addEventListener("resize", () => {
@@ -38,9 +37,9 @@ ZapparThree.permissionRequestUI().then((granted) => {
 });
 
 // Set up our instant tracker group
-const instantTracker = new ZapparThree.InstantWorldTracker();
-const instantTrackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, instantTracker);
-scene.add(instantTrackerGroup);
+// const instantTracker = new ZapparThree.InstantWorldTracker();
+// const instantTrackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, instantTracker);
+// scene.add(instantTrackerGroup);
 
 // face tracker group
 const faceTracker = new ZapparThree.FaceTrackerLoader(manager).load();
@@ -64,22 +63,24 @@ scene.add(faceTrackerGroup);
 //   window.screen.orientation.addEventListener('change', checkOrientation);
 // }
 
-// Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
   new THREE.SphereBufferGeometry(1, 32, 32),
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
-ball.position.set(0, 0, -20); // Adjust the position along the z-axis
-instantTrackerGroup.add(ball);
+ball.position.set(0, 0, -30); // Adjust the position along the z-axis
+scene.add(ball);
 
 const netTexture = new THREE.TextureLoader().load(netImg);
 const net = new THREE.Mesh(
-  new THREE.PlaneGeometry(28, 15),
+  // new THREE.PlaneGeometry(32, 19),
+  new THREE.PlaneGeometry(19, 38),
   new THREE.MeshBasicMaterial({ map: netTexture })
 );
-net.position.set(0, 0, -25);
+net.position.set(0, 3, -30);
 scene.add(net);
+console.log(net);
+
 
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(
@@ -88,17 +89,17 @@ gltfLoader.load(
     // Original model
     gloveModel = gltf.scene;
     gloveModel.scale.set(1.7, 1.7, 1.7);
-    gloveModel.position.set(0, -0.6, 1);
+    gloveModel.position.set(0, -0.6, -4);
     gloveModel.rotation.set(0, 20 * (Math.PI / 180), 0);
     faceTrackerGroup.add(gloveModel);
-    // console.log(gloveModel);
+    console.log(gloveModel);
 
     // Clone the model
     const clonedModel = gloveModel.clone();
-    clonedModel.position.set(0, -0.6, 1.8);
+    clonedModel.position.set(0, -0.6, -3.2);
     clonedModel.rotation.set(0, 200 * (Math.PI / 180), 0);
     faceTrackerGroup.add(clonedModel);
-    // console.log(clonedModel);
+    console.log(clonedModel);
   },
   undefined,
   (error) => console.error(error)
@@ -116,7 +117,8 @@ const pointLight = new THREE.PointLight(0xffffff, 0.5);
 pointLight.position.set(0, 100, 200);
 faceTrackerGroup.add(pointLight);
 
-const initialPosition = new THREE.Vector3(0, 0, -20);
+
+const initialPosition = new THREE.Vector3(0, 0, -30);
 // ball animation code
 function animateBall() {
   const targetPosition = new THREE.Vector3(
@@ -172,13 +174,11 @@ function updateScore() {
 
 const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
 placementUI.addEventListener("click", () => {
-  placementUI.style.display = 'none'; // Hide the UI
-  hasPlaced = true;
+  placementUI.style.display = 'none';
   let count = 0;
   const maxCount = 10;
   const interval = 3000; // 3 seconds
 
-  // Start the loop immediately
   animateBall();
   count++;
 
@@ -188,16 +188,14 @@ placementUI.addEventListener("click", () => {
     count++;
     if (count >= maxCount) {
       clearInterval(intervalId);
-      placementUI.style.display = 'block'; // Show the UI again
+      placementUI.style.display = 'block';
       ball.position.copy(initialPosition);
     }
   }, interval);
 });
 
-// Set up our render loop
+// Render loop
 function render() {
   camera.updateFrame(renderer);
-
-  if (!hasPlaced) instantTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
   renderer.render(scene, camera);
 }
