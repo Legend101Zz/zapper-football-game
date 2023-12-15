@@ -552,7 +552,7 @@ var camera = new _zapparThreejs.Camera({
     rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
     userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
 });
-camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.None;
+camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
 _zapparThreejs.glContextSet(renderer.getContext());
 const manager = new _zapparThreejs.LoadingManager();
 // Create a ThreeJS Scene and set its background to be the camera background texture
@@ -596,16 +596,16 @@ const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 gltfLoader.load(model, (gltf)=>{
     // Original model
     gloveModel = gltf.scene;
-    gloveModel.scale.set(4, 4, 4);
-    gloveModel.position.set(0, -0.6, -4);
+    gloveModel.scale.set(2, 2, 2);
+    // gloveModel.position.set(0, -0.6, -4);
     gloveModel.rotation.set(0, 0, 0);
     faceTrackerGroup.add(gloveModel);
-    // console.log(gloveModel);
+    console.log(gloveModel);
     // Clone the model
     const clonedModel = gloveModel.clone();
-    clonedModel.position.set(-0.8, -0.6, -2);
+    // clonedModel.position.set(-0.8, -0.6, -2);
     clonedModel.rotation.set(0, 180 * (Math.PI / 180), 0);
-    faceTrackerGroup.add(clonedModel);
+// faceTrackerGroup.add(clonedModel);
 // console.log(clonedModel);
 }, undefined, (error)=>console.error(error));
 const directionalLight = new _three.DirectionalLight("white", 0.6);
