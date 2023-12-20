@@ -616,10 +616,11 @@ faceTrackerGroup.add(ambientLight);
 const initialPosition = new _three.Vector3(0, 0, -30);
 let isMessageDisplayed = false;
 let isBallCaught = false;
+const messageDiv = document.getElementById("message") || document.createElement("div");
 // ball animation code
 function animateBall() {
     const targetPosition = new _three.Vector3(getRandomValue(-4, 4), getRandomValue(-2, 2), 5);
-    const animationDuration = 1150; // in milliseconds
+    const animationDuration = 1200; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
         const currentTime = Date.now();
@@ -639,13 +640,15 @@ function animateBall() {
             ball.position.copy(initialPosition);
             isBallCaught = false;
             if (!isMessageDisplayed) {
-                const messageDiv = document.getElementById("message");
                 if (messageDiv) {
                     isMessageDisplayed = true;
+                    messageDiv.style.opacity = "0.8";
                     messageDiv.textContent = "Goal!";
+                    messageDiv.style.color = "red";
                     setTimeout(()=>{
                         messageDiv.textContent = "";
                         isMessageDisplayed = false;
+                        messageDiv.style.opacity = "0";
                     }, 2000);
                 }
             }
@@ -660,23 +663,45 @@ function getRandomValue(min, max) {
 }
 let score = 0;
 var scorediv = document.getElementById("score") || document.createElement("div");
+// let audio = new Audio('../assets/male-cheer.mp3');
 function updateScore() {
     score++;
     scorediv.textContent = `Score: ${score}`;
     if (!isMessageDisplayed) {
-        const messageDiv = document.getElementById("message");
         if (messageDiv) {
             isMessageDisplayed = true;
-            messageDiv.textContent = "Goal Saved!";
+            messageDiv.style.opacity = "0.8";
+            messageDiv.textContent = "Saved!";
+            messageDiv.style.color = "green";
+            ball.position.copy(initialPosition);
+            // Play the MP3 file
+            // audio.play().catch(error => console.error("Audio playback failed:", error));
             setTimeout(()=>{
                 messageDiv.textContent = "";
                 isMessageDisplayed = false;
+                messageDiv.style.opacity = "0";
             }, 2000);
         }
     }
     return;
 }
+function showGameOverUI() {
+    // Display the game over UI
+    const gameOverUI = document.getElementById("game-over");
+    if (gameOverUI) {
+        gameOverUI.style.display = "block";
+        // Display the final score
+        const finalScoreElement = document.getElementById("final-score");
+        if (finalScoreElement) finalScoreElement.textContent = `Final Score: ${score}`;
+    }
+    // Add a click event listener to the restart button
+    const restartButton = document.getElementById("restart-button");
+    if (restartButton) restartButton.addEventListener("click", ()=>{
+        location.reload();
+    });
+}
 const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
+var ballsleft = document.getElementById("balls-left") || document.createElement("div");
 placementUI.addEventListener("click", ()=>{
     placementUI.style.display = "none";
     let count = 0;
@@ -684,13 +709,17 @@ placementUI.addEventListener("click", ()=>{
     const interval = 3000; // 3 seconds
     animateBall();
     count++;
+    ballsleft.textContent = `Balls Left: ${10 - count}`;
     const intervalId = setInterval(()=>{
         animateBall();
         count++;
+        ballsleft.textContent = `Balls Left: ${10 - count}`;
         if (count >= maxCount) {
             clearInterval(intervalId);
             placementUI.style.display = "block";
             ball.position.copy(initialPosition);
+            // Call gameOver after 3 seconds
+            setTimeout(showGameOverUI, 2000);
         }
     }, interval);
 });
