@@ -2,12 +2,26 @@ import * as THREE from "three";
 import * as ZapparThree from "@zappar/zappar-threejs";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Howl} from "howler";
+import confetti from 'canvas-confetti';
 import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
 const netImg = new URL("../assets/screen-4.jpg", import.meta.url).href;
 const model = new URL("../assets/gloves_goalkeeper.glb", import.meta.url).href;
 let gloveModel: any;
+const music = new URL("../assets/whistle.mp3", import.meta.url).href;
+const timerClip = new URL("../assets/timer.mp3", import.meta.url).href;
+const booClip = new URL("../assets/boo.mp3", import.meta.url).href;
+
+const cheerSound = new Howl({
+  src: [music],
+});
+const timerSound = new Howl({
+  src: [timerClip],
+});
+const booSound = new Howl({
+  src: [booClip],
+});
 
 // Setup ThreeJS in the usual way
 const renderer = new THREE.WebGLRenderer();
@@ -56,7 +70,6 @@ scene.add(ball);
 const netTexture = new THREE.TextureLoader().load(netImg);
 const net = new THREE.Mesh(
   new THREE.PlaneGeometry(32, 19),
-  // new THREE.PlaneGeometry(19, 38),
   new THREE.MeshBasicMaterial({ map: netTexture })
 );
 net.position.set(0, 0, -30);
@@ -79,6 +92,7 @@ if (window.screen.orientation) {
   window.screen.orientation.addEventListener('change', checkOrientation);
 }
 
+
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(
   model,
@@ -89,7 +103,7 @@ gltfLoader.load(
     // gloveModel.position.set(0, -0.6, -4);
     gloveModel.rotation.set(0, 0, 0);
     faceTrackerGroup.add(gloveModel);
-    console.log(gloveModel);
+    // console.log(gloveModel);
 
     // Clone the model
     const clonedModel = gloveModel.clone();
@@ -115,13 +129,19 @@ let isMessageDisplayed = false;
 let isBallCaught = false;
 const messageDiv = document.getElementById('message') || document.createElement("div");
 
+console.log(ball);
 // ball animation code
 function animateBall() {
   const targetPosition = new THREE.Vector3(
-    getRandomValue(-4, 4),
-    getRandomValue(-2, 2),
-    5
+    getRandomValue(-3.5, 3.5),
+    getRandomValue(-1.5, 1.5),
+    0
   );
+  // const targetPosition = new THREE.Vector3(
+  //   0,
+  //   0,
+  //   5
+  // );
 
   const animationDuration = 1200; // in milliseconds
   const startTime = Date.now();
@@ -142,7 +162,7 @@ function animateBall() {
       ball.position.copy(initialPosition);
       updateScore();
     }
-
+    
     if (ball.position.equals(targetPosition)) {
       ball.position.copy(initialPosition);
       isBallCaught = false;
@@ -152,6 +172,8 @@ function animateBall() {
           messageDiv.style.opacity = "0.8";
           messageDiv.textContent = "Goal!";
           messageDiv.style.color = "red";
+          booSound.play();
+
           setTimeout(() => {
             messageDiv.textContent = "";
             isMessageDisplayed = false;
@@ -177,24 +199,35 @@ function getRandomValue(min: number, max: number): number {
 let score = 0;
 var scorediv =
   document.getElementById("score") || document.createElement("div");
-  const music = new URL("../assets/male-cheer.mp3", import.meta.url).href;
-  const sound = new Howl({
-    src: [music],
-  });
 
 function updateScore() {
   score++;
   scorediv.textContent = `Score: ${score}`;
   if (!isMessageDisplayed) {
     if (messageDiv) {
+      cheerSound.play();
+      // Start the confetti effect from the bottom left corner
+      confetti({
+        particleCount: 300,
+        spread: 360,
+        startVelocity: 35,
+        origin: { x: 0, y: 1 }
+      });
+
+      // Start the confetti effect from the bottom right corner
+      confetti({
+        particleCount: 300,
+        spread: 360,
+        startVelocity: 35,
+        origin: { x: 1, y: 1 }
+      });
+
       isMessageDisplayed = true;
       messageDiv.style.opacity = "0.8";
       messageDiv.textContent = "Saved!";
       messageDiv.style.color = "green";
-      ball.position.copy(initialPosition);
-      // Play the MP3 file
-      sound.play();
-
+      ball.visible = false;
+      
       setTimeout(() => {
         messageDiv.textContent = "";
         isMessageDisplayed = false;
@@ -202,6 +235,7 @@ function updateScore() {
       }, 2000);
     }
   }
+  ball.visible = true;
   return;
 }
 
@@ -233,14 +267,25 @@ var ballsleft = document.getElementById('balls-left') || document.createElement(
 
 placementUI.addEventListener("click", () => {
   placementUI.style.display = "none";
+
+  let time = 3;
+  
+  setTimeout(() => timerSound.play(), 1000);
+  var timerElement = document.getElementById('timer') || document.createElement("div");
+  const timerId = setInterval(() => {
+    time--;
+    if (timerElement && time != -1) {
+      timerElement.textContent = `${time}`;
+    }
+    if(time == -1) {
+      timerElement.style.display = "none";
+      clearInterval(timerId);
+    }
+  }, 1000);
+
   let count = 0;
   const maxCount = 10;
   const interval = 3000; // 3 seconds
-
-  animateBall();
-  count++;
-  ballsleft.textContent = `Balls Left: ${10 - count}`;
-
   const intervalId = setInterval(() => {
     animateBall();
     count++;
@@ -249,7 +294,6 @@ placementUI.addEventListener("click", () => {
     if (count >= maxCount) {
       clearInterval(intervalId);
       ball.position.copy(initialPosition);
-      // Call gameOver after 3 seconds
       setTimeout(showGameOverUI, 2000);
     }
   }, interval);

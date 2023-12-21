@@ -63,6 +63,17 @@ html, body {
   left: 10px;
 }
 
+#timer {
+  color: red;
+  text-shadow: 0 0 10px #000c;
+  z-index: 2;
+  border-radius: 5px;
+  font-size: 60px;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+}
+
 #balls-left {
   color: orange;
   z-index: 2;
