@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import * as ZapparThree from "@zappar/zappar-threejs";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Howl} from "howler";
 import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
@@ -174,10 +175,12 @@ function getRandomValue(min: number, max: number): number {
 }
 
 let score = 0;
-
 var scorediv =
   document.getElementById("score") || document.createElement("div");
-  // let audio = new Audio('../assets/male-cheer.mp3');
+  const music = new URL("../assets/male-cheer.mp3", import.meta.url).href;
+  const sound = new Howl({
+    src: [music],
+  });
 
 function updateScore() {
   score++;
@@ -190,7 +193,7 @@ function updateScore() {
       messageDiv.style.color = "green";
       ball.position.copy(initialPosition);
       // Play the MP3 file
-      // audio.play().catch(error => console.error("Audio playback failed:", error));
+      sound.play();
 
       setTimeout(() => {
         messageDiv.textContent = "";
@@ -220,6 +223,7 @@ function showGameOverUI() {
   if (restartButton) {
     restartButton.addEventListener('click', () => {
       location.reload();
+      placementUI.style.display = "block";
     });
   }
 }
@@ -244,9 +248,7 @@ placementUI.addEventListener("click", () => {
 
     if (count >= maxCount) {
       clearInterval(intervalId);
-      placementUI.style.display = "block";
       ball.position.copy(initialPosition);
-
       // Call gameOver after 3 seconds
       setTimeout(showGameOverUI, 2000);
     }
