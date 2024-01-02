@@ -53,7 +53,7 @@ html, body {
 
 #score {
   color: orange;
-  z-index: 2;
+  z-index: 1;
   background: #000c;
   border-radius: 5px;
   padding: 5px 10px;
@@ -66,7 +66,7 @@ html, body {
 #timer {
   color: red;
   text-shadow: 0 0 10px #000c;
-  z-index: 2;
+  z-index: 1;
   border-radius: 5px;
   font-size: 60px;
   position: fixed;
@@ -76,7 +76,7 @@ html, body {
 
 #balls-left {
   color: orange;
-  z-index: 2;
+  z-index: 1;
   background: #000c;
   border-radius: 5px;
   padding: 5px 10px;

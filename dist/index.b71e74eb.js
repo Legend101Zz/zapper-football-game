@@ -601,12 +601,17 @@ const net = new _three.Mesh(new _three.PlaneGeometry(32, 19), new _three.MeshBas
 }));
 net.position.set(0, 0, -30);
 scene.add(net);
-// console.log(net);
+let gameOverUI = document.getElementById("game-over");
+let isPortrait = window.innerHeight > window.innerWidth;
+let isPaused = isPortrait;
 var _ = document.getElementById("rotateDevice") || document.createElement("div");
 function checkOrientation() {
     if (window.screen.orientation) {
         var isLandscape = window.screen.orientation.type.includes("landscape");
         _.style.display = isLandscape ? "none" : "block";
+        if (gameOverUI && isLandscape) gameOverUI.style.display = "none";
+        isPortrait = window.innerHeight > window.innerWidth;
+        isPaused = isPortrait;
     }
 }
 // Check orientation when the page loads
@@ -734,7 +739,6 @@ function updateScore() {
 }
 function showGameOverUI() {
     // Display the game over UI
-    const gameOverUI = document.getElementById("game-over");
     if (gameOverUI) {
         gameOverUI.style.display = "block";
         // Display the final score
@@ -764,9 +768,10 @@ placementUI.addEventListener("click", ()=>{
         }
     }, 1000);
     let count = 0;
-    const maxCount = 10;
+    const maxCount = 5;
     const interval = 3000; // 3 seconds
     const intervalId = setInterval(()=>{
+        if (isPaused) return;
         animateBall();
         count++;
         ballsleft.textContent = `Balls Left: ${10 - count}`;
