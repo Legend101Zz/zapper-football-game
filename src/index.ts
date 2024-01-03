@@ -76,21 +76,21 @@ net.position.set(0, 0, -30);
 scene.add(net);
 
 let gameOverUI = document.getElementById('game-over') as HTMLElement;
-let isPortrait = window.innerHeight > window.innerWidth;
+var isPortrait = window.screen.orientation.type.includes('portrait');
+var isLandscape = window.screen.orientation.type.includes('landscape');
 let isPaused = isPortrait;
-
 var _ = document.getElementById('rotateDevice') || document.createElement("div");
+
 function checkOrientation() {
   if (window.screen.orientation) {
-    var isLandscape = window.screen.orientation.type.includes('landscape');
-    _.style.display = isLandscape ? 'none' : 'block';
+    isLandscape = window.screen.orientation.type.includes('landscape');
+    isPortrait = window.screen.orientation.type.includes('portrait');
+    isPaused = isPortrait;
     
+    _.style.display = isLandscape ? 'none' : 'block';
     if(gameOverUI && isLandscape) {
       gameOverUI.style.display = 'none';
     }
-
-    isPortrait = window.innerHeight > window.innerWidth;
-    isPaused = isPortrait;
   }
 }
 
@@ -249,6 +249,8 @@ function updateScore() {
   return;
 }
 
+var timerElement = document.getElementById('timer') || document.createElement("div");
+
 function showGameOverUI() {
   // Display the game over UI
   if (gameOverUI) {
@@ -266,21 +268,21 @@ function showGameOverUI() {
   if (restartButton) {
     restartButton.addEventListener('click', () => {
       location.reload();
-      placementUI.style.display = "block";
+      startGameBtn.style.display = "block";
+      timerElement.style.display = "none";
     });
   }
 }
 
-const placementUI = document.getElementById("zappar-placement-ui") || document.createElement("div");
+const startGameBtn = document.getElementById("zappar-placement-ui") || document.createElement("div");
 var ballsleft = document.getElementById('balls-left') || document.createElement("div");
 
-placementUI.addEventListener("click", () => {
-  placementUI.style.display = "none";
-
+startGameBtn.addEventListener("click", () => {
+  startGameBtn.style.display = "none";
+  timerElement.style.display = "block";
   let time = 3;
   
   setTimeout(() => timerSound.play(), 1000);
-  var timerElement = document.getElementById('timer') || document.createElement("div");
   const timerId = setInterval(() => {
     time--;
     if (timerElement && time != -1) {
@@ -293,7 +295,7 @@ placementUI.addEventListener("click", () => {
   }, 1000);
 
   let count = 0;
-  const maxCount = 5;
+  const maxCount = 10;
   const interval = 3000; // 3 seconds
 
   const intervalId = setInterval(() => {

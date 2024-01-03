@@ -69,6 +69,7 @@ html, body {
   z-index: 1;
   border-radius: 5px;
   font-size: 60px;
+  display: none;
   position: fixed;
   top: 20%;
   left: 50%;
