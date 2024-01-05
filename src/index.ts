@@ -16,12 +16,15 @@ const booClip = new URL("../assets/boo.mp3", import.meta.url).href;
 
 const cheerSound = new Howl({
   src: [music],
+  html5: true,
 });
 const timerSound = new Howl({
   src: [timerClip],
+  html5: true,
 });
 const booSound = new Howl({
   src: [booClip],
+  html5: true,
 });
 
 // Setup ThreeJS in the usual way
