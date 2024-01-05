@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import * as ZapparThree from "@zappar/zappar-threejs";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Howl} from "howler";
-import confetti from 'canvas-confetti';
+import { Howl } from "howler";
+import confetti from "canvas-confetti";
+import TWEEN from "@tweenjs/tween.js";
 import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
@@ -15,12 +16,15 @@ const booClip = new URL("../assets/boo.mp3", import.meta.url).href;
 
 const cheerSound = new Howl({
   src: [music],
+  html5: true,
 });
 const timerSound = new Howl({
   src: [timerClip],
+  html5: true,
 });
 const booSound = new Howl({
   src: [booClip],
+  html5: true,
 });
 
 // Setup ThreeJS in the usual way
@@ -52,12 +56,10 @@ ZapparThree.permissionRequestUI().then((granted) => {
   else ZapparThree.permissionDeniedUI();
 });
 
-
 // face tracker group
 const faceTracker = new ZapparThree.FaceTrackerLoader(manager).load();
 const faceTrackerGroup = new ZapparThree.FaceAnchorGroup(camera, faceTracker);
 scene.add(faceTrackerGroup);
-
 
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
@@ -75,21 +77,22 @@ const net = new THREE.Mesh(
 net.position.set(0, 0, -30);
 scene.add(net);
 
-let gameOverUI = document.getElementById('game-over') as HTMLElement;
-var isPortrait = window.screen.orientation.type.includes('portrait');
-var isLandscape = window.screen.orientation.type.includes('landscape');
+let gameOverUI = document.getElementById("game-over") as HTMLElement;
+var isPortrait = window.screen.orientation.type.includes("portrait");
+var isLandscape = window.screen.orientation.type.includes("landscape");
 let isPaused = isPortrait;
-var _ = document.getElementById('rotateDevice') || document.createElement("div");
+var _ =
+  document.getElementById("rotateDevice") || document.createElement("div");
 
 function checkOrientation() {
   if (window.screen.orientation) {
-    isLandscape = window.screen.orientation.type.includes('landscape');
-    isPortrait = window.screen.orientation.type.includes('portrait');
+    isLandscape = window.screen.orientation.type.includes("landscape");
+    isPortrait = window.screen.orientation.type.includes("portrait");
     isPaused = isPortrait;
-    
-    _.style.display = isLandscape ? 'none' : 'block';
-    if(gameOverUI && isLandscape) {
-      gameOverUI.style.display = 'none';
+
+    _.style.display = isLandscape ? "none" : "block";
+    if (gameOverUI && isLandscape) {
+      gameOverUI.style.display = "none";
     }
   }
 }
@@ -99,9 +102,8 @@ checkOrientation();
 
 // Check orientation when it changes
 if (window.screen.orientation) {
-  window.screen.orientation.addEventListener('change', checkOrientation);
+  window.screen.orientation.addEventListener("change", checkOrientation);
 }
-
 
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(
@@ -133,11 +135,11 @@ faceTrackerGroup.add(directionalLight);
 const ambientLight = new THREE.AmbientLight("white", 0.4);
 faceTrackerGroup.add(ambientLight);
 
-
 const initialPosition = new THREE.Vector3(0, 0, -30);
 let isMessageDisplayed = false;
 let isBallCaught = false;
-const messageDiv = document.getElementById('message') || document.createElement("div");
+const messageDiv =
+  document.getElementById("message") || document.createElement("div");
 
 console.log(ball);
 // ball animation code
@@ -147,35 +149,44 @@ function animateBall() {
     getRandomValue(-1.5, 1.5),
     0
   );
-  // const targetPosition = new THREE.Vector3(
-  //   0,
-  //   0,
-  //   5
-  // );
 
-  const animationDuration = 1200; // in milliseconds
-  const startTime = Date.now();
-  
-  function updateAnimation() {
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - startTime;
-    const progress = Math.min(elapsedTime / animationDuration, 1);
-    ball.position.lerpVectors(initialPosition, targetPosition, progress);
+  const animationDuration = 1700; // in milliseconds
 
-    // Calculate the distance between the ball and the glove
-    var glovePosition = gloveModel.position;
-    var distance = ball.position.distanceTo(glovePosition);
+  // Clear any existing tweens
+  TWEEN.removeAll();
 
-    // If the distance is less than a certain threshold, reset the ball and update the score
-    if (distance < 1.8 && !isBallCaught) {
-      isBallCaught = true;
-      ball.position.copy(initialPosition);
-      updateScore();
-    }
-    
-    if (ball.position.equals(targetPosition)) {
-      ball.position.copy(initialPosition);
+  // Create a new tween
+  const tween = new TWEEN.Tween({
+    x: initialPosition.x,
+    y: initialPosition.y,
+    z: initialPosition.z,
+  })
+    .to(
+      { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z },
+      animationDuration
+    )
+    .easing(TWEEN.Easing.Quadratic.Out)
+    .onUpdate((object) => {
+      ball.position.set(object.x, object.y, object.z);
+
+      // Calculate the distance between the ball and the glove
+      const glovePosition = gloveModel.position;
+      const distance = ball.position.distanceTo(glovePosition);
+
+      // If the distance is less than a certain threshold, reset the ball and update the score
+      if (distance < 1.8 && !isBallCaught) {
+        ball.visible = false;
+        isBallCaught = true;
+        updateScore();
+        tween.stop(); // Stop the tween if the ball is caught
+      }
+    })
+    .start()
+    .onComplete(() => {
+      // Animation complete
       isBallCaught = false;
+      ball.position.copy(initialPosition);
+
       if (!isMessageDisplayed) {
         if (messageDiv) {
           isMessageDisplayed = true;
@@ -191,15 +202,8 @@ function animateBall() {
           }, 2000);
         }
       }
-      return;
-    }
-
-    if (progress < 1) {
-      requestAnimationFrame(updateAnimation);
-    }
-  }
-
-  updateAnimation();
+    })
+    .start();
 }
 
 function getRandomValue(min: number, max: number): number {
@@ -221,7 +225,7 @@ function updateScore() {
         particleCount: 300,
         spread: 360,
         startVelocity: 35,
-        origin: { x: 0, y: 1 }
+        origin: { x: 0, y: 1 },
       });
 
       // Start the confetti effect from the bottom right corner
@@ -229,7 +233,7 @@ function updateScore() {
         particleCount: 300,
         spread: 360,
         startVelocity: 35,
-        origin: { x: 1, y: 1 }
+        origin: { x: 1, y: 1 },
       });
 
       isMessageDisplayed = true;
@@ -237,7 +241,7 @@ function updateScore() {
       messageDiv.textContent = "Saved!";
       messageDiv.style.color = "green";
       ball.visible = false;
-      
+
       setTimeout(() => {
         messageDiv.textContent = "";
         isMessageDisplayed = false;
@@ -249,24 +253,25 @@ function updateScore() {
   return;
 }
 
-var timerElement = document.getElementById('timer') || document.createElement("div");
+var timerElement =
+  document.getElementById("timer") || document.createElement("div");
 
 function showGameOverUI() {
   // Display the game over UI
   if (gameOverUI) {
-    gameOverUI.style.display = 'block';
+    gameOverUI.style.display = "block";
 
     // Display the final score
-    const finalScoreElement = document.getElementById('final-score');
+    const finalScoreElement = document.getElementById("final-score");
     if (finalScoreElement) {
       finalScoreElement.textContent = `Final Score: ${score}`;
     }
   }
 
   // Add a click event listener to the restart button
-  const restartButton = document.getElementById('restart-button');
+  const restartButton = document.getElementById("restart-button");
   if (restartButton) {
-    restartButton.addEventListener('click', () => {
+    restartButton.addEventListener("click", () => {
       location.reload();
       startGameBtn.style.display = "block";
       timerElement.style.display = "none";
@@ -274,21 +279,24 @@ function showGameOverUI() {
   }
 }
 
-const startGameBtn = document.getElementById("zappar-placement-ui") || document.createElement("div");
-var ballsleft = document.getElementById('balls-left') || document.createElement("div");
+const startGameBtn =
+  document.getElementById("zappar-placement-ui") ||
+  document.createElement("div");
+var ballsleft =
+  document.getElementById("balls-left") || document.createElement("div");
 
 startGameBtn.addEventListener("click", () => {
   startGameBtn.style.display = "none";
   timerElement.style.display = "block";
   let time = 3;
-  
+
   setTimeout(() => timerSound.play(), 1000);
   const timerId = setInterval(() => {
     time--;
     if (timerElement && time != -1) {
       timerElement.textContent = `${time}`;
     }
-    if(time == -1) {
+    if (time == -1) {
       timerElement.style.display = "none";
       clearInterval(timerId);
     }
@@ -317,5 +325,6 @@ startGameBtn.addEventListener("click", () => {
 // Render loop
 function render() {
   camera.updateFrame(renderer);
+  TWEEN.update();
   renderer.render(scene, camera);
 }
