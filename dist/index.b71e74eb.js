@@ -552,17 +552,20 @@ const booClip = new URL(require("4a9f4d5aa520c253")).href;
 const cheerSound = new (0, _howler.Howl)({
     src: [
         music
-    ]
+    ],
+    html5: true
 });
 const timerSound = new (0, _howler.Howl)({
     src: [
         timerClip
-    ]
+    ],
+    html5: true
 });
 const booSound = new (0, _howler.Howl)({
     src: [
         booClip
-    ]
+    ],
+    html5: true
 });
 // Setup ThreeJS in the usual way
 const renderer = new _three.WebGLRenderer();
@@ -672,7 +675,6 @@ function animateBall() {
             ball.visible = false;
             isBallCaught = true;
             updateScore();
-            tween.stop(); // Stop the tween if the ball is caught
         }
     }).start().onComplete(()=>{
         // Animation complete

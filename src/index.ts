@@ -178,7 +178,6 @@ function animateBall() {
         ball.visible = false;
         isBallCaught = true;
         updateScore();
-        tween.stop(); // Stop the tween if the ball is caught
       }
     })
     .start()
