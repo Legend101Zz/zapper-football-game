@@ -118,9 +118,9 @@ gltfLoader.load(
     // console.log(gloveModel);
 
     // Clone the model
-    const clonedModel = gloveModel.clone();
+    // const clonedModel = gloveModel.clone();
     // clonedModel.position.set(-0.8, -0.6, -2);
-    clonedModel.rotation.set(0, 180 * (Math.PI / 180), 0);
+    // clonedModel.rotation.set(0, 180 * (Math.PI / 180), 0);
     // faceTrackerGroup.add(clonedModel);
     // console.log(clonedModel);
   },
@@ -141,16 +141,15 @@ let isBallCaught = false;
 const messageDiv =
   document.getElementById("message") || document.createElement("div");
 
-console.log(ball);
 // ball animation code
 function animateBall() {
   const targetPosition = new THREE.Vector3(
-    getRandomValue(-3.5, 3.5),
-    getRandomValue(-1.5, 1.5),
+    getRandomValue(-3.2, 3.2),
+    getRandomValue(-1.2, 1.2),
     0
   );
 
-  const animationDuration = 1700; // in milliseconds
+  const animationDuration = 1850; // in milliseconds
 
   // Clear any existing tweens
   TWEEN.removeAll();
@@ -169,12 +168,11 @@ function animateBall() {
     .onUpdate((object) => {
       ball.position.set(object.x, object.y, object.z);
 
-      // Calculate the distance between the ball and the glove
-      const glovePosition = gloveModel.position;
-      const distance = ball.position.distanceTo(glovePosition);
+      // Calculate the distance between the ball and the ftg
+      const distance = ball.position.distanceTo(faceTrackerGroup.position);
 
       // If the distance is less than a certain threshold, reset the ball and update the score
-      if (distance < 1.8 && !isBallCaught) {
+      if (distance < 1.0 && !isBallCaught) {
         ball.visible = false;
         isBallCaught = true;
         updateScore();

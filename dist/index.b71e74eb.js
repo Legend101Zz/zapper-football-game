@@ -542,13 +542,13 @@ var _canvasConfettiDefault = parcelHelpers.interopDefault(_canvasConfetti);
 var _tweenJs = require("@tweenjs/tween.js");
 var _tweenJsDefault = parcelHelpers.interopDefault(_tweenJs);
 var _indexCss = require("./index.css");
-const footImg = new URL(require("1c8134853988687")).href;
-const netImg = new URL(require("121fdd4cf9cfefec")).href;
-const model = new URL(require("d0bed386b2ab9c1d")).href;
+const footImg = new URL(require("89670de0c1d03156")).href;
+const netImg = new URL(require("6aaa5d963cde91d7")).href;
+const model = new URL(require("4ef024e086a4414")).href;
 let gloveModel;
-const music = new URL(require("8ab4a7b619a943df")).href;
-const timerClip = new URL(require("6ca8926020821003")).href;
-const booClip = new URL(require("4a9f4d5aa520c253")).href;
+const music = new URL(require("5971de12f5dda113")).href;
+const timerClip = new URL(require("984ee6bfdaf2196f")).href;
+const booClip = new URL(require("9f79ac51a5ce0289")).href;
 const cheerSound = new (0, _howler.Howl)({
     src: [
         music
@@ -632,11 +632,11 @@ gltfLoader.load(model, (gltf)=>{
     // gloveModel.position.set(0, -0.6, -4);
     gloveModel.rotation.set(0, 0, 0);
     faceTrackerGroup.add(gloveModel);
-    // console.log(gloveModel);
-    // Clone the model
-    const clonedModel = gloveModel.clone();
-    // clonedModel.position.set(-0.8, -0.6, -2);
-    clonedModel.rotation.set(0, 180 * (Math.PI / 180), 0);
+// console.log(gloveModel);
+// Clone the model
+// const clonedModel = gloveModel.clone();
+// clonedModel.position.set(-0.8, -0.6, -2);
+// clonedModel.rotation.set(0, 180 * (Math.PI / 180), 0);
 // faceTrackerGroup.add(clonedModel);
 // console.log(clonedModel);
 }, undefined, (error)=>console.error(error));
@@ -649,11 +649,10 @@ const initialPosition = new _three.Vector3(0, 0, -30);
 let isMessageDisplayed = false;
 let isBallCaught = false;
 const messageDiv = document.getElementById("message") || document.createElement("div");
-console.log(ball);
 // ball animation code
 function animateBall() {
-    const targetPosition = new _three.Vector3(getRandomValue(-3.5, 3.5), getRandomValue(-1.5, 1.5), 0);
-    const animationDuration = 1700; // in milliseconds
+    const targetPosition = new _three.Vector3(getRandomValue(-3.2, 3.2), getRandomValue(-1.2, 1.2), 0);
+    const animationDuration = 1850; // in milliseconds
     // Clear any existing tweens
     (0, _tweenJsDefault.default).removeAll();
     // Create a new tween
@@ -667,11 +666,10 @@ function animateBall() {
         z: targetPosition.z
     }, animationDuration).easing((0, _tweenJsDefault.default).Easing.Quadratic.Out).onUpdate((object)=>{
         ball.position.set(object.x, object.y, object.z);
-        // Calculate the distance between the ball and the glove
-        const glovePosition = gloveModel.position;
-        const distance = ball.position.distanceTo(glovePosition);
+        // Calculate the distance between the ball and the ftg
+        const distance = ball.position.distanceTo(faceTrackerGroup.position);
         // If the distance is less than a certain threshold, reset the ball and update the score
-        if (distance < 1.8 && !isBallCaught) {
+        if (distance < 1.0 && !isBallCaught) {
             ball.visible = false;
             isBallCaught = true;
             updateScore();
@@ -796,7 +794,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","howler":"5Vjgk","canvas-confetti":"cIEGq","./index.css":"irmnC","1c8134853988687":"bc1aq","121fdd4cf9cfefec":"kyN9c","d0bed386b2ab9c1d":"fOGld","8ab4a7b619a943df":"a91rT","6ca8926020821003":"1MbJq","4a9f4d5aa520c253":"3EAeY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@tweenjs/tween.js":"7DfAI"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","howler":"5Vjgk","canvas-confetti":"cIEGq","@tweenjs/tween.js":"7DfAI","./index.css":"irmnC","89670de0c1d03156":"bc1aq","6aaa5d963cde91d7":"kyN9c","4ef024e086a4414":"fOGld","5971de12f5dda113":"a91rT","984ee6bfdaf2196f":"1MbJq","9f79ac51a5ce0289":"3EAeY","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -31972,7 +31970,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("525d4855e14b8a5d"));
+                let url = new URL(require("ed06fabcc07d8233"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -31982,7 +31980,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("525d4855e14b8a5d"));
+                let url = new URL(require("ed06fabcc07d8233"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -31992,7 +31990,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("eeadb975cc7bf35e"));
+                let url = new URL(require("123d55cf62389823"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -32087,14 +32085,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("1520345f208aa687"));
+        let url = new URL(require("fd208d39802caa56"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","525d4855e14b8a5d":"htM1Y","eeadb975cc7bf35e":"e04H3","1520345f208aa687":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","ed06fabcc07d8233":"htM1Y","123d55cf62389823":"e04H3","fd208d39802caa56":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39635,10 +39633,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("6a416abd17de7520"));
+        if (!worker) worker = new Worker(require("b53f7a173eec4d7d"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("51afa8f9c3522ec5")).toString()
+            url: new URL(require("e1e4d25b26d30cb6")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39664,7 +39662,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","6a416abd17de7520":"35JNJ","51afa8f9c3522ec5":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","b53f7a173eec4d7d":"35JNJ","e1e4d25b26d30cb6":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);
@@ -57662,25 +57660,7 @@ var module = {};
 exports.default = module.exports;
 var create = module.exports.create;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"irmnC":[function() {},{}],"bc1aq":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football.1916492a.png" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"kyN9c":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "screen-4.400d6d0d.jpg" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"fOGld":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "gloves_goalkeeper.4cdad463.glb" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"a91rT":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "whistle.ae275738.mp3" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"1MbJq":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "timer.d836d28c.mp3" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"3EAeY":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "boo.b797bb0a.mp3" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"7DfAI":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7DfAI":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "Easing", ()=>Easing);
@@ -58396,6 +58376,24 @@ var exports = {
     update: update
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"irmnC":[function() {},{}],"bc1aq":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football.1916492a.png" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"kyN9c":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "screen-4.400d6d0d.jpg" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"fOGld":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "gloves_goalkeeper.4cdad463.glb" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"a91rT":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "whistle.ae275738.mp3" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"1MbJq":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "timer.d836d28c.mp3" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"3EAeY":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "boo.b797bb0a.mp3" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
 
 //# sourceMappingURL=index.b71e74eb.js.map
