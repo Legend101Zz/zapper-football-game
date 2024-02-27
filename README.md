@@ -1,1 +1,1 @@
-Creating a football-keeper ar game
+A face tracking webAR goalkeeper game using ZappAR.
